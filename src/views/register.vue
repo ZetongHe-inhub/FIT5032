@@ -43,7 +43,7 @@
                   <div v-if="errors.sex" class="text-danger">{{ errors.sex }}</div>
                 </div>
 
-                <!-- Email -->
+                <!-- Email: required + blur-driven JS validation -->
                 <div class="col-12 col-md-6 col-lg-4 mb-3">
                   <label for="email" class="form-label">Email</label>
                   <input
@@ -51,11 +51,15 @@
                     type="email"
                     class="form-control"
                     v-model="formData.email"
+                    @blur="() => validateEmail(true)"
+                    @input="() => validateEmail(false)"
                     placeholder="name@example.com"
                   />
+                  <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
+                  <div v-else class="form-text">Email is required.</div>
                 </div>
 
-                <!-- Mobile -->
+                <!-- Mobile: required + blur-driven JS validation -->
                 <div class="col-12 col-md-6 col-lg-6 mb-3">
                   <label for="mobile" class="form-label">Mobile number</label>
                   <input
@@ -63,8 +67,12 @@
                     type="tel"
                     class="form-control"
                     v-model="formData.mobile"
+                    @blur="() => validateMobile(true)"
+                    @input="() => validateMobile(false)"
                     placeholder="e.g. 04xx xxx xxx"
                   />
+                  <div v-if="errors.mobile" class="text-danger">{{ errors.mobile }}</div>
+                  <div v-else class="form-text">Mobile number is required (04xx xxx xxx).</div>
                 </div>
 
                 <!-- Auth code: required + fixed 13 digits  -->
@@ -132,6 +140,8 @@ const formData = ref({
 // Errors object
 const errors = ref({
   sex: null,
+  email: null,
+  mobile: null,
   authCode: null,
 })
 
@@ -147,7 +157,39 @@ const validateSex = (blur) => {
   }
 }
 
-// Auth code validation
+// Email validation
+const validateEmail = (blur) => {
+  const value = formData.value.email.trim()
+  
+  if (!value) {
+    if (blur) errors.value.email = 'Email is required.'
+  } else {
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(value)) {
+      if (blur) errors.value.email = 'Please enter a valid email address.'
+    } else {
+      errors.value.email = null
+    }
+  }
+}
+
+// Mobile validation
+const validateMobile = (blur) => {
+  const value = formData.value.mobile.trim()
+  
+  if (!value) {
+    if (blur) errors.value.mobile = 'Mobile number is required.'
+  } else {
+    // Australian mobile format: 04xx xxx xxx (with or without spaces)
+    const mobileRegex = /^04\d{2}\s?\d{3}\s?\d{3}$/
+    if (!mobileRegex.test(value)) {
+      if (blur) errors.value.mobile = 'Please enter a valid Australian mobile number (04xx xxx xxx).'
+    } else {
+      errors.value.mobile = null
+    }
+  }
+}
 const validateAuthCode = (blur) => {
   const value = formData.value.authCode.trim()
   
@@ -163,7 +205,7 @@ const validateAuthCode = (blur) => {
 const submitForm = (e) => {
   const el = e.target
 
-  // Run HTML5 validations
+  // Run built-in HTML5 validations
   if (!el.checkValidity()) {
     el.reportValidity()
     return
@@ -171,10 +213,12 @@ const submitForm = (e) => {
 
   // Run custom JS validations
   validateSex(true)
+  validateEmail(true)
+  validateMobile(true)
   validateAuthCode(true)
   
   // Check if custom validations passed
-  if (errors.value.sex || errors.value.authCode) {
+  if (errors.value.sex || errors.value.email || errors.value.mobile || errors.value.authCode) {
     return
   }
 
@@ -190,6 +234,8 @@ const clearForm = () => {
   formData.value.mobile = ''
   formData.value.authCode = ''
   errors.value.sex = null
+  errors.value.email = null
+  errors.value.mobile = null
   errors.value.authCode = null
 }
 
@@ -203,7 +249,7 @@ const formatSex = (s) =>
 }
 
 .card-header { 
-  background-color: #27bba2; 
+  background-color: #275FDA; 
   color: #fff; 
 }
 
