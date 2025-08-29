@@ -1,4 +1,4 @@
-<!-- src/views/Register.vue -->
+<!-- src/views/register.vue -->
 <template>
   <div class="container py-5">
     <div class="row justify-content-center g-4">

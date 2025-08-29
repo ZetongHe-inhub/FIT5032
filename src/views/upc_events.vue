@@ -55,7 +55,6 @@
               </span>
             </div>
 
-            <!-- Only keep Email button -->
             <div class="mt-auto">
               <a
                 class="btn btn-outline-secondary btn-sm"
@@ -68,7 +67,6 @@
         </div>
       </div>
 
-      <!-- Empty state -->
       <div v-if="events.length === 0" class="col-12">
         <div class="alert alert-warning mb-0">No upcoming events yet.</div>
       </div>

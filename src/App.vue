@@ -1,14 +1,7 @@
 <template>
-  <div>
-    <UpcomingEvents />
-  </div>
+  <Register />
 </template>
 
-<script>
-import UpcomingEvents from "./views/upc_events.vue";
-
-export default {
-  name: "UpcomingEventsApp",
-  components: { UpcomingEvents }
-};
+<script setup>
+import Register from './views/register.vue' 
 </script>
