@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Page content -->
     <UpcomingEvents />
   </div>
 </template>
@@ -9,7 +8,7 @@
 import UpcomingEvents from "./views/upc_events.vue";
 
 export default {
-  name: "UpcomingEventsPage",
+  name: "UpcomingEventsApp",
   components: { UpcomingEvents }
 };
 </script>
