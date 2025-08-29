@@ -1,8 +1,4 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap'
+import { createApp } from "vue";
+import App from "./App.vue";
 
-// Create Vue app and mount to #app in index.html
-createApp(App).mount('#app')
-
+createApp(App).mount("#app");
