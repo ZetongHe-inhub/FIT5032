@@ -1,60 +1,51 @@
 <template>
-  <!-- Using Bootstrap's Header template (starter code) -->
-  <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
-  <div class="container">
-    <header class="d-flex justify-content-center py-3">
-      <ul class="nav nav-pills">
-        <li class="nav-item">
-          <router-link to="/FireLogin" class="nav-link" active-class="active">Firebase Login</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/FireRegister" class="nav-link" active-class="active">Firebase Register</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/" class="nav-link" active-class="active" aria-current="page">Welcome</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/UpcomingEvents" class="nav-link" active-class="active">UpcomingEvents</router-link>
-        </li>
-        
-      </ul>
-    </header>
-  </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <router-link class="navbar-brand" to="/">Fit&Fix</router-link>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="navMain" class="collapse navbar-collapse">
+        <!-- 左侧菜单 -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- 未登录：只给 Welcome （现阶段） -->
+          <li class="nav-item" v-if="!isAuthed"><router-link class="nav-link" to="/">Welcome</router-link></li>
+
+          <!-- 已登录：给 Upcoming Events -->
+          <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/UpcomingEvents">Upcoming Events</router-link></li>
+        </ul>
+
+        <!-- 右侧：欢迎语 + Logout / 或 登录注册按钮组 -->
+        <div class="d-flex align-items-center gap-2">
+          <template v-if="isAuthed">
+            <span class="text-muted small">Welcome, {{ displayName }}</span>
+            <button class="btn btn-outline-secondary btn-sm" @click="doLogout">Logout</button>
+          </template>
+          <template v-else>
+            <router-link class="btn btn-outline-primary btn-sm" to="/FireLogin">Login</router-link>
+            <router-link class="btn btn-primary btn-sm" to="/FireRegister">Register</router-link>
+          </template>
+        </div>
+      </div>
+    </div>
+  </nav>
 </template>
 
-<style scoped>
-.b-example-divider {
-  height: 3rem;
-  background-color: rgba(0, 0, 0, 0.1);
-  border: solid rgba(0, 0, 0, 0.15);
-  border-width: 1px 0;
-  box-shadow:
-    inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
-    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
-}
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthState, logout } from '@/composables/authState'
 
-.form-control-dark {
-  color: #fff;
-  background-color: var(--bs-dark);
-  border-color: var(--bs-gray);
-}
-.form-control-dark:focus {
-  color: #fff;
-  background-color: var(--bs-dark);
-  border-color: #fff;
-  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
-}
+const router = useRouter()
+const auth = useAuthState()
 
-.bi {
-  vertical-align: -0.125em;
-  fill: currentColor;
-}
+const isAuthed = computed(() => !!auth.user)
+const displayName = computed(() => auth.user?.displayName || auth.user?.email || 'Member')
 
-.text-small {
-  font-size: 85%;
+async function doLogout() {
+  await logout()
+  router.push('/')  // 回到主页面
 }
-
-.dropdown-toggle {
-  outline: 0;
-}
-</style>
+</script>

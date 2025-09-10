@@ -7,6 +7,8 @@ import router from './router'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 
+import { initAuthWatcher } from './composables/authState'
+
 
 const app = createApp(App)
 app.use(PrimeVue, { theme: { preset: Aura } })
@@ -33,4 +35,7 @@ const firebaseConfig = {
 // 这里删除了多余的重复初始化代码
 // Initialize Firebase
 initializeApp(firebaseConfig);
+
+// 感知是否登录状态
+initAuthWatcher()
 
