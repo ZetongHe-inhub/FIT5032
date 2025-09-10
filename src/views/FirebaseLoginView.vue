@@ -1,24 +1,26 @@
 <template>
-  <div class="welcome-container">
-    <h1>Here we'll do the sign in later</h1>
-  </div>
+  <h1>Sign in</h1>
+  <p><input type="text" placeholder="Email" v-model = "email"/></p>
+  <p><input type="password" placeholder="Password" v-model="password" /></p>
+  <p><button @click="signin">Sign in via Firebase</button></p>
 </template>
 
 <script setup>
-// leave it empty for now
+import { ref } from "vue"
+import {getAuth, signInWithEmailAndPassword} from "firebase/auth"
+import {useRouter} from "vue-router"
+const email = ref ("")
+const password = ref("")
+const router = useRouter()
+const auth = getAuth()
+const signin = () => {
+    signInWithEmailAndPassword(getAuth(), email.value, password.value)
+    .then((data) => {
+        console.log("Firebase Register Successful!")
+        router.push("/")
+        console.log(auth.currentUser) //To check the current User signed in
+    }).catch((error) => {
+        console.log(error.code);
+    })
+};
 </script>
-
-<style scoped>
-.welcome-container {
-  display: flex;
-  justify-content: center; 
-  align-items: center;     
-  height: 100vh;           
-  text-align: center;
-}
-
-h1 {
-  font-size: 2rem;
-  font-weight: bold;
-}
-</style>

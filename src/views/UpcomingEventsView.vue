@@ -5,7 +5,7 @@
       <div class="col">
         <h1 class="h3 mb-0">Upcoming Events</h1>
         <p class="text-muted mb-0">
-          Programs by <strong>Fit&Fix you in Melbourne</strong> — referral-based community sport for mental wellbeing.
+          Programs by <strong>Fit&Fix you in Melbourne</strong>
         </p>
       </div>
     </div>
