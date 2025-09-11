@@ -5,6 +5,7 @@ import FirebaseLoginView from "../views/FirebaseLoginView.vue"
 import FirebaseRegisterView from "../views/FirebaseRegisterView.vue"
 import WelcomeView from '../views/WelocmeView.vue'
 import UpcomingEventsView from '../views/UpcomingEventsView.vue'
+import RateEventView from '../views/RateEventView.vue'
 
 // define the routes
 const routes = [
@@ -27,6 +28,12 @@ const routes = [
         path: '/UpcomingEvents',
         name: 'UpcomingEventsView',
         component: UpcomingEventsView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/Rate',
+        name: 'RateEventView',
+        component: RateEventView,
         meta: { requiresAuth: true }
     }
 

@@ -15,6 +15,8 @@
 
           <!-- 已登录：给 Upcoming Events -->
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/UpcomingEvents">Upcoming Events</router-link></li>
+        
+          <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/rate">Make a rating</router-link></li>
         </ul>
 
         <!-- 右侧：欢迎语 + Logout / 或 登录注册按钮组 -->
