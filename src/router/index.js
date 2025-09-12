@@ -45,7 +45,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/events/:eventId/reviews', //???这个path是啥东西
+        path: '/events/:eventId/reviews', 
         name: 'EventReviewsDetailsView',             // event detailed review page
         component: EventReviewsDetailsView,
         meta: { requiresAuth: true }

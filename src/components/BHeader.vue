@@ -8,12 +8,12 @@
       </button>
 
       <div id="navMain" class="collapse navbar-collapse">
-        <!-- 左侧菜单 -->
+        <!-- left side part : main nav bar -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- 未登录：只给 Welcome （现阶段） -->
+          <!-- Visitor state：only Welcome page（for now） -->
           <li class="nav-item" v-if="!isAuthed"><router-link class="nav-link" to="/">Welcome</router-link></li>
 
-          <!-- 已登录：给 Upcoming Events -->
+          <!-- Login state： full access to web functions -->
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/UpcomingEvents">Upcoming Events</router-link></li>
         
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/rate">Make a Rating</router-link></li>
@@ -21,7 +21,7 @@
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/reviews">Events Review</router-link></li>
         </ul>
 
-        <!-- 右侧：欢迎语 + Logout / 或 登录注册按钮组 -->
+        <!-- right side part：welcome text + Logout / or Login/register button -->
         <div class="d-flex align-items-center gap-2">
           <template v-if="isAuthed">
             <span class="text-muted small">Welcome, {{ displayName }}</span>
@@ -50,6 +50,6 @@ const displayName = computed(() => auth.user?.displayName || auth.user?.email ||
 
 async function doLogout() {
   await logout()
-  router.push('/')  // 回到主页面
+  router.push('/')  // back to welcome page
 }
 </script>

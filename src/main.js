@@ -14,7 +14,7 @@ const app = createApp(App)
 app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(router)
 
-// ② 感知是否登录（必须在 init 之后）
+// init the auth state listener
 initAuthWatcher()
 
 app.mount('#app')
