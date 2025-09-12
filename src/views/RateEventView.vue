@@ -4,7 +4,7 @@
     <h1 class="h4 mb-2">Rate our events</h1>
     <h2 class="h6 text-muted mb-4">Choose a event to rate</h2>
 
-    <!-- event selection -->
+    <!-- event selction -->
     <div class="mb-4">
       <select class="form-select" v-model="selectedId">
         <option disabled value="">Select an event</option>
@@ -15,7 +15,7 @@
       <div v-if="events.length===0" class="form-text">No past events to rate.</div>
     </div>
 
-    <!-- rating (star style)（1~5） -->
+    <!-- rating（1~5） -->
     <div class="mb-3">
       <label class="form-label">Your rating</label>
       <div class="btn-group w-100" role="group" aria-label="rating 1 to 5">
@@ -31,7 +31,7 @@
       <div class="form-text">1 (lowest) – 5 (highest)</div>
     </div>
 
-    <!-- user type review  -->
+    <!-- text review -->
     <div class="mb-4">
       <label for="review" class="form-label">Your review</label>
       <textarea id="review" class="form-control" rows="4"
@@ -46,12 +46,12 @@
       {{ pending ? 'Submitting…' : 'Submit' }}
     </button>
 
-    <!-- outcome alert -->
+    <!-- outcome  -->
     <div v-if="msg" class="alert mt-3" :class="ok ? 'alert-success' : 'alert-danger'">
       {{ msg }}
     </div>
 
-    <!-- rating data recaculation (used in dev stage to synchronize data to ensure data consistency) -->
+    <!-- dev tool: for data syn and data integrity -->
     <!--
     <div class="mt-4" v-if="selectedId">
       <div class="d-flex align-items-center gap-2">
@@ -61,7 +61,7 @@
         <span class="text-muted small">Fix existing data if average shows 0.</span>
       </div>
       <div v-if="recalcMsg" class="alert alert-info mt-2 mb-0">{{ recalcMsg }}</div>
-    </div> 
+    </div>
     -->
   </div>
 </template>
@@ -71,10 +71,32 @@ import { ref, onMounted, computed } from 'vue'
 import { getAuth } from 'firebase/auth'
 import { db } from '@/firebase/init'
 import {
-  collection, getDocs, doc, getDoc, runTransaction, serverTimestamp, updateDoc
+  collection, getDocs, doc, getDoc, runTransaction,
+  serverTimestamp, updateDoc
 } from 'firebase/firestore'
 
-// events lists（only show: isPast=true）
+/* ---------- helpers ---------- */
+function toDateText(ts) {
+  const d = ts?.toDate?.() || new Date(ts)
+  return isNaN(d) ? '' : d.toDateString()
+}
+function tsToMillis(ts) {
+  try { return ts?.toMillis?.() ?? 0 } catch { return 0 }
+}
+// coverts <, >, &, ", ', ` to HTML entities
+function sanitizePlainText(str = '') {
+  return String(str).replace(/[&<>"'`]/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+    "'": '&#x27;', '`': '&#x60;'
+  }[ch]))
+}
+// basic heuristic to detect potential HTML/JS injection
+function looksLikeHtmlAttack(str = '') {
+  const s = String(str).toLowerCase()
+  return s.includes('<script') || s.includes('javascript:') || /<[^>]+>/.test(s)
+}
+
+/* ---------- state ---------- */
 const events = ref([])          // [{id, title, eventDate, ...}]
 const selectedId = ref('')
 const rating = ref(0)
@@ -83,16 +105,16 @@ const pending = ref(false)
 const ok = ref(false)
 const msg = ref('')
 
-// dev tool（one time syn）
 const recalcPending = ref(false)
 const recalcMsg = ref('')
 
+/* ---------- init ---------- */
 onMounted(async () => {
   const snap = await getDocs(collection(db, 'events'))
   const all = snap.docs.map(d => ({ id: d.id, ...d.data() }))
   events.value = all
     .filter(e => e.isPast === true)
-    .sort((a, b) => (b?.eventDate?.toMillis?.() ?? 0) - (a?.eventDate?.toMillis?.() ?? 0))
+    .sort((a, b) => tsToMillis(b.eventDate) - tsToMillis(a.eventDate))
 
   if (events.value.length === 1) selectedId.value = events.value[0].id
 })
@@ -101,11 +123,7 @@ const canSubmit = computed(() =>
   selectedId.value && rating.value >= 1 && rating.value <= 5
 )
 
-function toDateText(ts) {
-  const d = ts?.toDate?.() || new Date(ts)
-  return isNaN(d) ? '' : d.toDateString()
-}
-
+/* ---------- submit  ---------- */
 async function submit() {
   msg.value = ''
   ok.value = false
@@ -113,14 +131,21 @@ async function submit() {
     msg.value = 'Please choose an event and a rating (1–5).'
     return
   }
+
   pending.value = true
   try {
     const auth = getAuth()
     const uid = auth.currentUser.uid
     const email = auth.currentUser.email || 'user'
     const eventId = selectedId.value
+    const safeReview = sanitizePlainText(review.value)
 
-    // —— write or re-write my rating & review; update event aggregate.
+    // warn if review looks like HTML/JS attack
+    if (looksLikeHtmlAttack(review.value)) {
+      ok.value = true
+      msg.value = 'Note: HTML/JS in your review will be saved as plain text.'
+    }
+
     await runTransaction(db, async (tx) => {
       const eventRef = doc(db, 'events', eventId)
       const myRef    = doc(db, 'events', eventId, 'ratings', uid)
@@ -135,16 +160,14 @@ async function submit() {
       let sum   = Number(evt.ratingSum || 0)
       let count = Number(evt.ratingCount || 0)
 
-      if (prev == null) { sum += now; count += 1 }
-      else { sum += (now - prev) }
-
+      if (prev == null) { sum += now; count += 1 } else { sum += (now - prev) }
       const avg = count ? Number((sum / count).toFixed(2)) : 0
 
       tx.set(myRef, {
         userId: uid,
         userEmail: email,
         rating: now,
-        review: review.value || '',
+        review: safeReview,
         createdAt: rSnap.exists() ? rSnap.data().createdAt : serverTimestamp(),
         updatedAt: serverTimestamp(),
       }, { merge: true })
@@ -152,8 +175,10 @@ async function submit() {
       tx.update(eventRef, { ratingSum: sum, ratingCount: count, ratingAvg: avg })
     })
 
-    ok.value = true
-    msg.value = 'Your rating has been saved.'
+    if (!looksLikeHtmlAttack(review.value)) {
+      ok.value = true
+      msg.value = 'Your rating has been saved.'
+    }
   } catch (e) {
     ok.value = false
     msg.value = e?.message || 'Failed to save rating.'
@@ -162,7 +187,7 @@ async function submit() {
   }
 }
 
-// —— dev tool: recalc aggregate data for selected event
+/* ---------- dev-only: recalc aggregate ---------- */
 async function recalc() {
   if (!selectedId.value) return
   recalcMsg.value = ''

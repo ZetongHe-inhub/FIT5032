@@ -23,7 +23,7 @@
                 <strong>{{ r.userEmail }}</strong>
                 <span>{{ r.rating }} ★</span>
               </div>
-              <div class="mt-1" style="white-space: pre-wrap;">{{ r.review || '(no text)' }}</div>
+              <div class="mt-1" style="white-space: pre-wrap;" v-text="r.review || '(no text)'"></div>
               <div class="text-muted small mt-1">{{ timeText(r.createdAt) }}</div>
             </div>
           </div>
