@@ -81,7 +81,7 @@ const form = reactive({
   password: ''
 })
 
-// Email JS validation（必填 + 正则，与 Register 保持一致）
+// Email JS validation
 const emailTouched = ref(false)
 const emailError = ref(null)
 function validateEmail() {
@@ -98,7 +98,7 @@ function validateEmail() {
   emailError.value = null
 }
 
-// Password 仅用 HTML 校验（required + 8~30），按钮用 computed 再兜一层
+// Password — HTML validation only (required + 8~30)
 const passwordOk = computed(() =>
   !!form.password && form.password.length >= 8 && form.password.length <= 30
 )
@@ -116,7 +116,7 @@ async function onSubmit() {
   try {
     const auth = getAuth()
     await signInWithEmailAndPassword(auth, form.email, form.password)
-    // 如果是被守卫拦下来的，会带 redirect；否则进会员页
+    // if success, redirect to `redirect` query param or home page
     router.push(route.query.redirect || '/')
   } catch (e) {
     firebaseError.value = e?.message || 'Sign in failed.'

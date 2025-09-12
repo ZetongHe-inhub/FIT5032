@@ -6,6 +6,8 @@ import FirebaseRegisterView from "../views/FirebaseRegisterView.vue"
 import WelcomeView from '../views/WelocmeView.vue'
 import UpcomingEventsView from '../views/UpcomingEventsView.vue'
 import RateEventView from '../views/RateEventView.vue'
+import EventReviewsView from '../views/EventReviewsView.vue'
+import EventReviewsDetailsView from '../views/EventReviewsDetailsView.vue'
 
 // define the routes
 const routes = [
@@ -34,6 +36,18 @@ const routes = [
         path: '/Rate',
         name: 'RateEventView',
         component: RateEventView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/reviews',
+        name: 'EventReviewsView',                    // event selection page
+        component: EventReviewsView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/events/:eventId/reviews', //???这个path是啥东西
+        name: 'EventReviewsDetailsView',             // event detailed review page
+        component: EventReviewsDetailsView,
         meta: { requiresAuth: true }
     }
 

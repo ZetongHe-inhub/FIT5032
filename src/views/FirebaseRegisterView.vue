@@ -46,7 +46,7 @@
                 <div class="form-text">Use 8–30 characters.</div>
               </div>
 
-              <!-- Invite Code (必填，6位，Firestore 校验) -->
+              <!-- Invite Code : required filed with 6 length char -->
               <div class="mb-4">
                 <label for="invite" class="form-label">Invite code</label>
                 <input
@@ -78,7 +78,7 @@
                 {{ pending ? 'Creating account…' : 'Sign up and Login' }}
               </button>
 
-              <!-- Firebase / 业务错误 -->
+              <!-- Firebase / error handling -->
               <div v-if="firebaseError" class="alert alert-danger mt-3 mb-0">
                 {{ firebaseError }}
               </div>
@@ -100,14 +100,13 @@ import { doc, getDoc, runTransaction, serverTimestamp } from 'firebase/firestore
 
 const router = useRouter()
 
-// 表单 state
 const form = reactive({
   email: '',
   password: '',
   inviteCode: ''
 })
 
-// Email —— JS 校验
+// Email —— JS validation (required + regex, same as Register)
 const emailTouched = ref(false)
 const emailError = ref(null)
 function validateEmail() {
@@ -118,12 +117,12 @@ function validateEmail() {
   emailError.value = null
 }
 
-// Password —— 仅 HTML 校验（required + 8~30），按钮用 computed 再兜一层
+// Password —— only HTML validation (required + 8~30)
 const passwordOk = computed(() =>
   !!form.password && form.password.length >= 8 && form.password.length <= 30
 )
 
-// Invite code —— JS 校验（必填、6位、只含字母数字；是否存在由 Firestore 再判定）
+// Invite code —— JS validation（required + exactly 6 alphanumeric characters + firestore existence check）
 const inviteTouched = ref(false)
 const inviteError = ref(null)
 function validateInvite() {
@@ -148,30 +147,31 @@ async function onSubmit() {
   const auth = getAuth()
 
   try {
-    // ① 注册前：检查 Firestore 中的邀请码是否存在且未使用（docId = code）
+    // check invite code existence and unused
     const CODE = form.inviteCode.toUpperCase().trim()
     const codeRef = doc(db, 'inviteCodes', CODE)
     const preSnap = await getDoc(codeRef)
     if (!preSnap.exists()) throw new Error('Invalid invite code.')
     if (preSnap.data().used) throw new Error('Invite code already used.')
 
-    // ② 创建账号（注意：此时 Firebase 会把你登录）
+    // create user account
     const cred = await createUserWithEmailAndPassword(auth, form.email, form.password)
     const uid = cred.user.uid
 
-    // ③ 原子占用邀请码（并发安全）：把 used 从 false 改 true，并记录 usedBy/usedAt
+    // Firestore transaction: check + mark invite code as used
     await runTransaction(db, async (tx) => {
       const snap = await tx.get(codeRef)
       if (!snap.exists()) throw new Error('Invalid invite code.')
       if (snap.data().used) throw new Error('Invite code already used.')
       tx.update(codeRef, { used: true, usedBy: uid, usedAt: serverTimestamp() })
-      // 如需写 users/{uid} 档案，也可以在这里顺手 tx.set(...)
+
     })
 
-    // ④ 成功：按你当前流程跳回首页（此时是已登录）
+    // success, redirect to home page
     router.push('/')
   } catch (e) {
-    // 如果是邀请码并发冲突等导致失败，回滚刚创建的账号，确保“没有码就没有用户”
+    // if I've created the user but something else failed (e.g. invite code problem),
+    // delete the user to avoid "ghost users"
     if ((e?.message || '').includes('Invite code')) {
       try { if (auth.currentUser) await deleteUser(auth.currentUser) } catch {}
     }
