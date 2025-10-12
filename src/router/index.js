@@ -8,6 +8,7 @@ import UpcomingEventsView from '../views/UpcomingEventsView.vue'
 import RateEventView from '../views/RateEventView.vue'
 import EventReviewsView from '../views/EventReviewsView.vue'
 import EventReviewsDetailsView from '../views/EventReviewsDetailsView.vue'
+import MapView from '../views/MapView.vue'
 
 // define the routes
 const routes = [
@@ -30,6 +31,12 @@ const routes = [
         path: '/UpcomingEvents',
         name: 'UpcomingEventsView',
         component: UpcomingEventsView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/Map',
+        name: 'MapView',
+        component: MapView,
         meta: { requiresAuth: true }
     },
     {

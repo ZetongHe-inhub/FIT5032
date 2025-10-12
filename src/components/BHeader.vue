@@ -15,6 +15,8 @@
 
           <!-- Login state： full access to web functions -->
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/UpcomingEvents">Upcoming Events</router-link></li>
+
+          <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/Map">Map</router-link></li>
         
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/rate">Make a Rating</router-link></li>
 
