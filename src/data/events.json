@@ -1,86 +1,122 @@
 [
   {
-    "id": "evt-001",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Buddy Matching Kick-off",
-    "summary": "Meet your activity buddy, break the ice with a short walk, and learn how pairing supports confidence and adherence.",
-    "start": "2025-09-07T10:30:00+10:00",
-    "end": "2025-09-07T12:00:00+10:00",
-    "venue": "Carlton Gardens Pavilion",
-    "address": "1-111 Carlton St, Carlton VIC",
-    "tags": ["social", "onboarding", "light-activity"],
-    "contact_email": "programs@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/buddy-kickoff",
-    "capacity": 40
+    "id": "ev-001",
+    "name": "Sunrise Yoga at Carlton Gardens",
+    "start": "2025-10-05T07:00:00+10:00",
+    "durationMin": 60,
+    "address": "Carlton Gardens, 1-111 Carlton St, Carlton VIC 3053",
+    "contactEmail": "zetonghe13@gamil.com"
   },
   {
-    "id": "evt-002",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Gentle Start: Gym Orientation Tour",
-    "summary": "Low-pressure walkthrough of equipment and class options. Designed for participants with mild to moderate anxiety.",
-    "start": "2025-09-10T18:00:00+10:00",
-    "end": "2025-09-10T19:15:00+10:00",
-    "venue": "City Square Community Gym",
-    "address": "120 Collins St, Melbourne VIC",
-    "tags": ["orientation", "confidence-building"],
-    "contact_email": "access@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/gym-orientation",
-    "capacity": 25
+    "id": "ev-002",
+    "name": "Strength Circuit Melbourne City Baths",
+    "start": "2025-10-07T18:00:00+10:00",
+    "durationMin": 75,
+    "address": "Melbourne City Baths, 420 Swanston St, Melbourne VIC 3000",
+    "contactEmail": "programs@fitandfix.org.au"
   },
   {
-    "id": "evt-003",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Mindful Movement (Yoga Basics)",
-    "summary": "A beginner-friendly yoga session focusing on breathing, grounding, and calm social connection.",
-    "start": "2025-09-14T09:00:00+10:00",
-    "end": "2025-09-14T10:00:00+10:00",
-    "venue": "North Melbourne Community Hall",
-    "address": "120 Macaulay Rd, North Melbourne VIC",
-    "tags": ["yoga", "mindfulness", "low-intensity"],
-    "contact_email": "classes@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/mindful-movement",
-    "capacity": 30
+    "id": "ev-003",
+    "name": "Park Run Prep Princes Park",
+    "start": "2025-10-09T06:30:00+10:00",
+    "durationMin": 55,
+    "address": "Princes Park, Royal Parade, Carlton North VIC 3054",
+    "contactEmail": "runclub@fitandfix.org.au"
   },
   {
-    "id": "evt-004",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Community Basketball Social",
-    "summary": "Light half-court games with flexible rules and a focus on inclusion and encouragement.",
-    "start": "2025-09-18T17:30:00+10:00",
-    "end": "2025-09-18T19:00:00+10:00",
-    "venue": "Docklands Recreation Centre",
-    "address": "66-90 Little Lonsdale St, Melbourne VIC",
-    "tags": ["team-sport", "moderate-intensity", "social"],
-    "contact_email": "events@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/basketball-social",
-    "capacity": 24
+    "id": "ev-004",
+    "name": "Mindful Walk Flagstaff Gardens",
+    "start": "2025-10-11T09:00:00+10:00",
+    "durationMin": 60,
+    "address": "Flagstaff Gardens, 309–311 William St, Melbourne VIC 3000",
+    "contactEmail": "wellbeing@fitandfix.org.au"
   },
   {
-    "id": "evt-005",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Parkrun with Pals",
-    "summary": "Walk or jog 5 km with supportive pacers. Buddy pairs encouraged; no timing pressure.",
-    "start": "2025-09-21T08:00:00+10:00",
-    "end": "2025-09-21T09:30:00+10:00",
-    "venue": "Princes Park",
-    "address": "Royal Parade, Parkville VIC",
-    "tags": ["walking", "running", "outdoors"],
-    "contact_email": "outreach@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/parkrun-pals",
-    "capacity": 60
+    "id": "ev-005",
+    "name": "Core Basics Royal Botanic Gardens",
+    "start": "2025-10-13T17:30:00+10:00",
+    "durationMin": 50,
+    "address": "Royal Botanic Gardens, Birdwood Ave, South Yarra VIC 3141",
+    "contactEmail": "classes@fitandfix.org.au"
   },
   {
-    "id": "evt-006",
-    "project": "Fit&Fix you in Melbourne",
-    "title": "Nutrition 101 (Webinar)",
-    "summary": "Simple evidence-based tips for fuelling movement and stabilising mood, plus Q&A with a community dietitian.",
-    "start": "2025-09-25T19:00:00+10:00",
-    "end": "2025-09-25T20:00:00+10:00",
-    "venue": "Online (Zoom)",
-    "address": "Virtual",
-    "tags": ["webinar", "education"],
-    "contact_email": "support@fitandfix.org.au",
-    "rsvp_url": "https://example.org/rsvp/nutrition-101",
-    "capacity": 100
+    "id": "ev-006",
+    "name": "Cycling Skills Albert Park Lake",
+    "start": "2025-10-15T07:30:00+10:00",
+    "durationMin": 90,
+    "address": "Albert Park Lake, Aughtie Dr, Albert Park VIC 3206",
+    "contactEmail": "outdoors@fitandfix.org.au"
+  },
+  {
+    "id": "ev-007",
+    "name": "Lunchtime Mobility Fitzroy Gardens",
+    "start": "2025-10-16T12:30:00+10:00",
+    "durationMin": 45,
+    "address": "Fitzroy Gardens, Wellington Parade, East Melbourne VIC 3002",
+    "contactEmail": "mobility@fitandfix.org.au"
+  },
+  {
+    "id": "ev-008",
+    "name": "Evening HIIT Queen Victoria Gardens",
+    "start": "2025-10-17T18:15:00+10:00",
+    "durationMin": 45,
+    "address": "Queen Victoria Gardens, St Kilda Rd, Melbourne VIC 3004",
+    "contactEmail": "hiit@fitandfix.org.au"
+  },
+  {
+    "id": "ev-009",
+    "name": "Beginner Run Royal Park",
+    "start": "2025-10-19T08:00:00+10:00",
+    "durationMin": 60,
+    "address": "Royal Park, Flemington Rd, Parkville VIC 3052",
+    "contactEmail": "runclub@fitandfix.org.au"
+  },
+  {
+    "id": "ev-010",
+    "name": "Strength Basics Edinburgh Gardens",
+    "start": "2025-10-21T17:45:00+10:00",
+    "durationMin": 70,
+    "address": "Edinburgh Gardens, St Georges Rd, Fitzroy North VIC 3068",
+    "contactEmail": "programs@fitandfix.org.au"
+  },
+  {
+    "id": "ev-011",
+    "name": "Rowing Erg Intro Docklands Park",
+    "start": "2025-10-23T18:00:00+10:00",
+    "durationMin": 60,
+    "address": "Docklands Park, 865 Collins St, Docklands VIC 3008",
+    "contactEmail": "classes@fitandfix.org.au"
+  },
+  {
+    "id": "ev-012",
+    "name": "Sunset Walk Southbank Promenade",
+    "start": "2025-10-24T18:30:00+10:00",
+    "durationMin": 50,
+    "address": "Southbank Promenade, Southbank VIC 3006",
+    "contactEmail": "wellbeing@fitandfix.org.au"
+  },
+  {
+    "id": "ev-013",
+    "name": "Trail Warm-up Yarra Bend Park",
+    "start": "2025-10-26T07:45:00+11:00",
+    "durationMin": 75,
+    "address": "Yarra Bend Park, Yarra Bend Rd, Fairfield VIC 3078",
+    "contactEmail": "outdoors@fitandfix.org.au"
+  },
+  {
+    "id": "ev-014",
+    "name": "Boxing Fundamentals City Baths",
+    "start": "2025-10-28T19:00:00+11:00",
+    "durationMin": 60,
+    "address": "Melbourne City Baths, 420 Swanston St, Melbourne VIC 3000",
+    "contactEmail": "classes@fitandfix.org.au"
+  },
+  {
+    "id": "ev-015",
+    "name": "Breath and Balance Treasury Gardens",
+    "start": "2025-10-30T07:15:00+11:00",
+    "durationMin": 55,
+    "address": "Treasury Gardens, 2–18 Spring St, East Melbourne VIC 3002",
+    "contactEmail": "wellbeing@fitandfix.org.au"
   }
 ]
