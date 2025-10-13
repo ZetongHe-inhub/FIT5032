@@ -75,6 +75,9 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 const router = useRouter()
 const route = useRoute()
 
+// --- Admin email (demo only). For production, consider custom claims or Firestore roles.
+const ADMIN_EMAIL = 'admin@gmail.com'
+
 // form state
 const form = reactive({
   email: '',
@@ -116,8 +119,16 @@ async function onSubmit() {
   try {
     const auth = getAuth()
     await signInWithEmailAndPassword(auth, form.email, form.password)
-    // if success, redirect to `redirect` query param or home page
-    router.push(route.query.redirect || '/')
+
+    // --- After successful sign-in, decide where to go:
+    // 1) If admin, always go to /admin.
+    // 2) Else, respect ?redirect=... or default to '/'.
+    const userEmail = auth.currentUser?.email?.toLowerCase()
+    let target = route.query.redirect || '/'
+    if (userEmail === ADMIN_EMAIL.toLowerCase()) {
+      target = '/admin'
+    }
+    router.push(target)
   } catch (e) {
     firebaseError.value = e?.message || 'Sign in failed.'
   } finally {
