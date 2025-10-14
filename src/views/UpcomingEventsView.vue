@@ -29,9 +29,21 @@
       <div class="card-body">
         <div class="d-flex align-items-center justify-content-between">
           <h2 class="h6 m-0">All upcoming events</h2>
-          <small class="text-muted">
-            Showing {{ pagedRows.length }} of {{ filteredAndSorted.length }}
-          </small>
+
+          <!-- right top : export -->
+          <div class="d-flex align-items-center gap-2">
+            <small class="text-muted">
+              Showing {{ pagedRows.length }} of {{ filteredAndSorted.length }}
+            </small>
+            <button
+              class="btn btn-outline-primary btn-sm"
+              :disabled="filteredAndSorted.length === 0"
+              @click="exportCsv"
+              title="Export filtered results to CSV"
+            >
+              Export CSV ({{ filteredAndSorted.length }})
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive mt-3">
@@ -192,7 +204,7 @@
 import { computed, reactive, ref } from 'vue'
 import eventsData from '@/data/events.json'
 
-/* ---------- util ---------- */
+/* ---------- utility functions ---------- */
 const formatLocal = (iso) => {
   try {
     const d = new Date(iso)
@@ -202,8 +214,27 @@ const formatLocal = (iso) => {
 const includes = (v, q) =>
   String(v ?? '').toLowerCase().includes(String(q ?? '').toLowerCase())
 
+/* CSV helpers */
+function csvEscape(v) {
+  if (v === null || v === undefined) return ''
+  const s = String(v)
+
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+function downloadText(text, filename, mime = 'text/plain;charset=utf-8;') {
+  const blob = new Blob([text], { type: mime })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 /* ---------- state ---------- */
-const rows = ref(eventsData) 
+const rows = ref(eventsData)
 const globalQuery = ref('')
 const page = ref(1)
 const pageSize = ref(10)
@@ -318,6 +349,27 @@ function toggleLocSort(key) {
     locSortKey.value = key
     locSortDir.value = 'asc'
   }
+}
+
+/* ---------- Export filtered results as CSV ---------- */
+function exportCsv() {
+  const header = ['Name', 'Start (local)', 'Duration (min)', 'Address', 'Contact Email']
+  const lines = [header.map(csvEscape).join(',')]
+
+  filteredAndSorted.value.forEach(r => {
+    lines.push([
+      csvEscape(r.name),
+      csvEscape(formatLocal(r.start)),  
+      csvEscape(r.durationMin),
+      csvEscape(r.address),
+      csvEscape(r.contactEmail)
+    ].join(','))
+  })
+
+  // Add BOM for Excel compatibility
+  const csvContent = '\uFEFF' + lines.join('\n')
+  const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
+  downloadText(csvContent, `events_${ts}.csv`, 'text/csv;charset=utf-8;')
 }
 
 /* ---------- tiny sort icon component ---------- */
