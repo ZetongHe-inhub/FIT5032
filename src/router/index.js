@@ -11,6 +11,7 @@ import EventReviewsView from '../views/EventReviewsView.vue'
 import EventReviewsDetailsView from '../views/EventReviewsDetailsView.vue'
 import MapView from '../views/MapView.vue'
 import AdminWelcomeView from '../views/AdminWelcomeView.vue'
+import AdminEmailView from '../views/AdminEmailView.vue'
 
 function isAdmin(user) {
   return user?.email?.toLowerCase() === 'admin@gmail.com'
@@ -73,6 +74,12 @@ const routes = [
     component: AdminWelcomeView, 
     meta: { requiresAdmin: true } 
   },
+  {
+    path: '/admin/events',
+    name: 'AdminEmail',
+    component: AdminEmailView,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  }
 ]
 
 const router = createRouter({
