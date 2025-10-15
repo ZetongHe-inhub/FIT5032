@@ -29,8 +29,8 @@
 
         <div class="mb-3">
           <label class="form-label">Subject</label>
-          <input type="text" class="form-control" v-model.trim="subject" 
-                 placeholder="e.g. Schedule update for next week" />
+          <input type="text" class="form-control" v-model.trim="subject"
+                  placeholder="e.g. Schedule update for next week" />
         </div>
 
         <div class="mb-3">
@@ -50,10 +50,18 @@
             @change="onFileChange"
           />
           <div class="form-text">
-            You can attach multiple files. Total size should be under 50kb.
+            You can attach multiple files. Total size should be under 500KB.
           </div>
           <div v-if="attachmentWarning" class="alert alert-warning mt-2 p-2 small">
             {{ attachmentWarning }}
+          </div>
+          <div v-if="selectedFiles.length" class="mt-2">
+            <small class="text-muted">Selected files:</small>
+            <ul class="small mb-0">
+              <li v-for="file in selectedFiles" :key="file.name">
+                {{ file.name }} ({{ (file.size / 1024).toFixed(2) }}KB)
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -98,25 +106,20 @@
 <script setup>
 import { ref, computed } from 'vue'
 import emailjs from '@emailjs/browser'
-import Papa from 'papaparse'
 
-// ------- ENV -------
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
 const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
-// initialize EmailJS
 if (PUBLIC_KEY) {
   emailjs.init(PUBLIC_KEY)
-} else {
-  console.error('❌ EmailJS PUBLIC_KEY not found in environment variables')
 }
 
-// ------- State -------
 const rawRecipients = ref('')
 const subject = ref('')
 const message = ref('')
 const fileInput = ref(null)
+const selectedFiles = ref([])
 const sending = ref(false)
 const progress = ref({ sent: 0, total: 0 })
 const failed = ref([])
@@ -124,17 +127,15 @@ const attachmentWarning = ref('')
 
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-// Parse recipients
 const parsedFromText = computed(() => {
   const text = rawRecipients.value || ''
   if (!text) return []
   return text
-    .split(/[\s,;]+/g)   
+    .split(/[\s,;]+/g)
     .map(s => s.trim())
     .filter(Boolean)
 })
 
-// Deduplicate + validate
 const validRecipients = computed(() => {
   const set = new Set()
   parsedFromText.value.forEach(e => {
@@ -159,30 +160,34 @@ const resultsDone = computed(() =>
   progress.value.total > 0 && !sending.value
 )
 
-// sacle of file sizec check
 function onFileChange() {
   attachmentWarning.value = ''
+  selectedFiles.value = []
+  
   const files = fileInput.value?.files
   if (!files || files.length === 0) return
   
   let totalSize = 0
   for (const file of files) {
     totalSize += file.size
+    selectedFiles.value.push({
+      name: file.name,
+      size: file.size
+    })
   }
   
-  const maxSize = 50 * 1024  // 50KB limit
+  const maxSize = 500 * 1024
   
   if (totalSize > maxSize) {
-    attachmentWarning.value = `Total file size (${(totalSize / 1024).toFixed(2)}KB) exceeds limit (50KB). Please select smaller files.`
+    attachmentWarning.value = `Total file size (${(totalSize / 1024).toFixed(2)}KB) exceeds limit (${maxSize/1024}KB). Please select smaller files.`
   }
 }
 
-// delay helper
 const wait = (ms) => new Promise(r => setTimeout(r, ms))
 
 async function sendEmailWithAttachments(toEmail) {
   const hasFiles = fileInput.value?.files?.length > 0
-
+  
   if (!hasFiles) {
     return await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
       to_email: toEmail,
@@ -190,12 +195,9 @@ async function sendEmailWithAttachments(toEmail) {
       message: message.value
     })
   }
-
+  
   const form = document.createElement('form')
-  form.style.position = 'fixed'
-  form.style.left = '-9999px'     
-  document.body.appendChild(form)
-
+  
   const addHidden = (name, value) => {
     const input = document.createElement('input')
     input.type = 'hidden'
@@ -203,36 +205,31 @@ async function sendEmailWithAttachments(toEmail) {
     input.value = value
     form.appendChild(input)
   }
+  
   addHidden('to_email', toEmail)
   addHidden('subject', subject.value)
   addHidden('message', message.value)
-
-  const fileEl = fileInput.value
-  const originalParent = fileEl.parentNode
-  const originalNext = fileEl.nextSibling
-
-  if (!fileEl.getAttribute('name')) fileEl.setAttribute('name', 'files')
-
-  form.appendChild(fileEl)
-
-  try {
-    const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form)
-    return res
-  } finally {
-    if (originalNext) {
-      originalParent.insertBefore(fileEl, originalNext)
-    } else {
-      originalParent.appendChild(fileEl)
-    }
-    document.body.removeChild(form)
+  
+  const files = fileInput.value.files
+  const dataTransfer = new DataTransfer()
+  
+  for (let i = 0; i < files.length; i++) {
+    dataTransfer.items.add(files[i])
   }
+  
+  const fileInputClone = document.createElement('input')
+  fileInputClone.type = 'file'
+  fileInputClone.name = 'files'
+  fileInputClone.multiple = true
+  fileInputClone.files = dataTransfer.files
+  form.appendChild(fileInputClone)
+  
+  return await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form)
 }
 
-// send all emails
 async function sendAll() {
   if (!canSend.value) return
   
-  // validate .env
   if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
     alert('❌ EmailJS configuration is missing. Please check your .env file.')
     return
@@ -241,16 +238,11 @@ async function sendAll() {
   sending.value = true
   failed.value = []
   progress.value = { sent: 0, total: validRecipients.value.length }
-
+  
   for (const to of validRecipients.value) {
     try {
       await sendEmailWithAttachments(to)
-      console.log(`✅ Successfully sent to: ${to}`)
-      
     } catch (err) {
-      console.error(`❌ Failed to send to ${to}:`, err)
-      
-      // extract error message
       let errorMsg = 'Unknown error'
       if (err?.text) {
         errorMsg = err.text
@@ -264,7 +256,6 @@ async function sendAll() {
         email: to, 
         reason: errorMsg
       })
-      
     } finally {
       progress.value.sent++
       
@@ -275,12 +266,11 @@ async function sendAll() {
   }
   
   sending.value = false
-  console.log(`🏁 Batch send completed. Success: ${progress.value.sent - failed.value.length}, Failed: ${failed.value.length}`)
 }
 </script>
 
 <style scoped>
-.card { 
-  border-radius: .8rem; 
+.card {
+  border-radius: .8rem;
 }
 </style>
