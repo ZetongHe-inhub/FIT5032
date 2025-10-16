@@ -21,7 +21,10 @@
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/rate">Make a Rating</router-link></li>
 
           <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/reviews">Events Review</router-link></li>
+
+          <li class="nav-item" v-if="isAuthed"><router-link class="nav-link" to="/aboutus">About Us</router-link></li>
         </ul>
+        
 
         <!-- right side part：welcome text + Logout / or Login/register button -->
         <div class="d-flex align-items-center gap-2">

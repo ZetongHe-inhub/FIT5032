@@ -7,12 +7,21 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Inform Users</h5>
-            <p class="card-text">sent emails to users for events update etc.</p>
+            <p class="card-text">send emails to users for event updates, etc.</p>
             <RouterLink to="/admin/events" class="btn btn-primary btn-sm">Go</RouterLink>
           </div>
         </div>
       </div>
 
+      <div class="col-12 col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">User Registration Statistics</h5>
+            <p class="card-text">check the number of users.</p>
+            <RouterLink to="/admin/account" class="btn btn-primary btn-sm">Go</RouterLink>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +29,6 @@
 <script setup>
 import { getAuth } from 'firebase/auth'
 import { computed } from 'vue'
-
 const auth = getAuth()
 const userEmail = computed(() => auth.currentUser?.email || '')
 </script>
