@@ -1,4 +1,3 @@
-<!-- src/views/FirebaseLoginView.vue -->
 <template>
   <div class="container py-5">
     <div class="row justify-content-center">
@@ -75,7 +74,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 const router = useRouter()
 const route = useRoute()
 
-// --- Admin email (demo only). For production, consider custom claims or Firestore roles.
+// --- Admin email.
 const ADMIN_EMAIL = 'admin@gmail.com'
 
 // form state
@@ -122,7 +121,7 @@ async function onSubmit() {
 
     // --- After successful sign-in, decide where to go:
     // 1) If admin, always go to /admin.
-    // 2) Else, respect ?redirect=... or default to '/'.
+    // 2) Else, direct default to '/'.
     const userEmail = auth.currentUser?.email?.toLowerCase()
     let target = route.query.redirect || '/'
     if (userEmail === ADMIN_EMAIL.toLowerCase()) {

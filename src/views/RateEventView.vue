@@ -1,4 +1,3 @@
-<!-- src/views/RateEventView.vue -->
 <template>
   <div class="container py-5">
     <h1 class="h4 mb-2">Rate our events</h1>
@@ -51,18 +50,6 @@
       {{ msg }}
     </div>
 
-    <!-- dev tool: for data syn and data integrity -->
-    <!--
-    <div class="mt-4" v-if="selectedId">
-      <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-outline-secondary btn-sm" @click="recalc" :disabled="recalcPending">
-          {{ recalcPending ? 'Recalculating…' : 'Recalc aggregate (dev only)' }}
-        </button>
-        <span class="text-muted small">Fix existing data if average shows 0.</span>
-      </div>
-      <div v-if="recalcMsg" class="alert alert-info mt-2 mb-0">{{ recalcMsg }}</div>
-    </div>
-    -->
   </div>
 </template>
 
